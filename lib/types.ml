@@ -37,20 +37,20 @@ module Person = struct
 
   let cmp (a:affiliation) (b:affiliation) =
     let order = function
-    |`CL -> 0
-    |`CLx -> 1
-    |`Citrix -> 2
-    |`OCP -> 3
-    |`INRIA -> 3
-    |`JSC -> 4
-    |`Horizon -> 5
-    |`SRI -> 6
-    |`OnApp -> 7
-    |`NYU -> 8
-    |`UMONS -> 9
-    |`UPMC -> 9
-    |`Google -> 10
-    |`Past -> 11
+      |`CL -> 0
+      |`CLx -> 1
+      |`Citrix -> 2
+      |`OCP -> 3
+      |`INRIA -> 3
+      |`JSC -> 4
+      |`Horizon -> 5
+      |`SRI -> 6
+      |`OnApp -> 7
+      |`NYU -> 8
+      |`UMONS -> 9
+      |`UPMC -> 9
+      |`Google -> 10
+      |`Past -> 11
     in compare (order a) (order b)
 
   type t = {
@@ -66,13 +66,13 @@ module Person = struct
   (* Group people by affiliation *)
   let by_affiliation =
     List.fold_left ~init:[] ~f:(fun a b ->
-      match List.Assoc.find a b.affiliation with
-      |None -> List.Assoc.add a b.affiliation [b]
-      |Some v ->
-        (* TODO is there a List.Assoc.replace? *)
-        let l = List.Assoc.remove a b.affiliation in
-        List.Assoc.add l b.affiliation (b::v)
-    )
+        match List.Assoc.find a b.affiliation with
+        |None -> List.Assoc.add a b.affiliation [b]
+        |Some v ->
+          (* TODO is there a List.Assoc.replace? *)
+          let l = List.Assoc.remove a b.affiliation in
+          List.Assoc.add l b.affiliation (b::v)
+      )
 end
 
 module Paper = struct
@@ -94,17 +94,17 @@ end
 module Reference = struct
 
   type link = [
-   | `Pdf of string
-   | `Blog of string
-   | `Github of string * string (* user, repo *)
-   | `Github_issues of string * string (* user, repo *)
-   | `Github_issue of string * string * int (* user, repo, issue *)
-   | `Github_tag of string * string * string (* user, repo, tag *)
-   | `Webpage of string
-   | `Video of string
-   | `Slideshare of string
-   | `Mantis of int
-   | `Paper of Paper.t
+    | `Pdf of string
+    | `Blog of string
+    | `Github of string * string (* user, repo *)
+    | `Github_issues of string * string (* user, repo *)
+    | `Github_issue of string * string * int (* user, repo, issue *)
+    | `Github_tag of string * string * string (* user, repo, tag *)
+    | `Webpage of string
+    | `Video of string
+    | `Slideshare of string
+    | `Mantis of int
+    | `Paper of Paper.t
   ]
   and t = {
     name: string;
@@ -142,13 +142,13 @@ end
 module Output = struct
 
   type ty = [
-   | `Paper of Reference.t (* conference ref *)
-   | `Blog_post
-   | `Talk of Reference.t (* conference ref *)
-   | `Event of string list (* people id list *)
-   | `Article of Reference.t (* publication ref *)
-   | `Asset
-   | `Code
+    | `Paper of Reference.t (* conference ref *)
+    | `Blog_post
+    | `Talk of Reference.t (* conference ref *)
+    | `Event of string list (* people id list *)
+    | `Article of Reference.t (* publication ref *)
+    | `Asset
+    | `Code
   ]
   and t = {
     id: string;
@@ -165,13 +165,13 @@ module Project = struct
     | `Doing
     | `Complete
     ]
-   
+
   let status_to_string = function
     |`Planning -> "planning"
     |`Doing -> "doing"
     |`Complete -> "complete"
 
-   type project = {
+  type project = {
     project_id: string;
     project_name: string;
     project_owner: Person.t;
@@ -195,7 +195,7 @@ module Project = struct
     let finish = Option.map finish ~f:Date.of_string in
     { task_name=name; task_descr=descr; start; finish; owner; status; refs; related }
 
-  let people_in_project p = 
+  let people_in_project p =
     let rest = List.fold_left ~init:[] ~f:(fun a t -> t.owner :: a) p.tasks in
     List.dedup (p.project_owner :: p.team @ rest)
 

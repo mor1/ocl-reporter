@@ -64,23 +64,23 @@ let style =
   <:html<
     <style>
     a.icon-github {
-	background: url(../github.png) no-repeat 0 0;
-	padding: 0 0 2px 2em;
+background: url(../github.png) no-repeat 0 0;
+padding: 0 0 2px 2em;
     }
     a.icon-cloud {
-	background: url(../cloud.png) no-repeat 0 0;
+background: url(../cloud.png) no-repeat 0 0;
         background-size: 17px;
-	padding: 0 0 2px 2em;
+padding: 0 0 2px 2em;
     }
     a.icon-bullhorn {
-	background: url(../bullhorn.png) no-repeat 0 0;
+background: url(../bullhorn.png) no-repeat 0 0;
         background-size: 17px;
-	padding: 0 0 2px 2em;
+padding: 0 0 2px 2em;
     }
     a.icon-wrench {
-	background: url(../wrench.png) no-repeat 0 0;
+background: url(../wrench.png) no-repeat 0 0;
         background-size: 17px;
-	padding: 0 0 2px 2em;
+padding: 0 0 2px 2em;
     }
     </style>
   >>
@@ -94,8 +94,8 @@ let people =
   let open Types.Person in
   let person_to_html p =
     let m = mugshot_img ~size:80 p in
-   let phref = person_href p <:html<$str:p.name$&>> in
-   <:html<
+    let phref = person_href p <:html<$str:p.name$&>> in
+    <:html<
       <table style="float:left">
         <tr><td>$m$</td></tr>
         <tr><td width="130px">$phref$<br /><span style="font-size:90%">$str:p.role$</span></td></tr>
@@ -104,7 +104,7 @@ let people =
   in
   let ext_people =
     List.map Data.People.of_other ~f:(fun (org,people) ->
-      <:html<
+        <:html<
         <p><b>$str:to_string org$</b></p>
         <div style="overflow:auto">$list:List.map ~f:person_to_html people$</div>
       >>)
@@ -121,7 +121,7 @@ let people =
   >> in
   (* And output the full people web page *)
   one_page ~title:"People" ~body:
-  <:html<
+    <:html<
   <h1 id="Members">Project Members</h1>
   <p>OCaml Labs is situated at the University of Cambridge Computer Laboratory, and collaborates with a wide variety of industrial partners, primarily <a href="#janestreet">Jane Street</a>, <a href="#horizon">Horizon</a> and <a href="#citrix">Citrix</a>.  We also work closely with <a href="#ocamlpro">OCamlPro</a> on community software projects, and maintain the <a href="http://ocaml.org">ocaml.org</a> infrastructure.</p>
    $orgs$
@@ -154,51 +154,51 @@ let one_project proj =
   let open Project in
   let tasks =
     List.map ~f:(fun t ->
-      let descr =
-        match t.task_descr with
-        |None -> []
-        |Some descr ->
-          Markdown.from_file_to_html (sprintf "%s/%s" proj.project_id descr)
-      in
-      let status =
-        let mode =
-           match t.status with
-           |`Planning -> <:html<<span class="planning">Planning</span>&>>
-           |`Doing -> <:html<<span class="doing">In Progress</span>&>>
-           |`Complete -> <:html<<span class="complete">Complete</span>&>>
+        let descr =
+          match t.task_descr with
+          |None -> []
+          |Some descr ->
+            Markdown.from_file_to_html (sprintf "%s/%s" proj.project_id descr)
         in
-        let start = <:html<$str:human_readable_date t.start$>> in
-        let finish =
-          match t.finish with
-          |None -> <:html<&>>
-          |Some d -> <:html< $str:human_readable_date d$>>
+        let status =
+          let mode =
+            match t.status with
+            |`Planning -> <:html<<span class="planning">Planning</span>&>>
+            |`Doing -> <:html<<span class="doing">In Progress</span>&>>
+            |`Complete -> <:html<<span class="complete">Complete</span>&>>
+          in
+          let start = <:html<$str:human_readable_date t.start$>> in
+          let finish =
+            match t.finish with
+            |None -> <:html<&>>
+            |Some d -> <:html< $str:human_readable_date d$>>
+          in
+          let phref = sprintf "../people/%s.html" t.owner.Person.id in
+          let pname = t.owner.Person.name in
+          let n = <:html<<a href=$str:phref$>$str:pname$</a>&>> in
+          <:html< $mode$ by $n$ ($start$ -$finish$) >>
         in
-        let phref = sprintf "../people/%s.html" t.owner.Person.id in
-        let pname = t.owner.Person.name in
-        let n = <:html<<a href=$str:phref$>$str:pname$</a>&>> in
-        <:html< $mode$ by $n$ ($start$ -$finish$) >>
-      in
-      let mugshots = mugshot_img ~size:40 t.owner in
-      let related =
-        let links = List.map
-          ~f:(fun (desc, pid, tname) ->
-            let url = pid ^ ".html#" ^ tname in
-              <:html<<li><a href=$str:url$>$str:desc$</a></li>&>>)
-          t.related
+        let mugshots = mugshot_img ~size:40 t.owner in
+        let related =
+          let links = List.map
+              ~f:(fun (desc, pid, tname) ->
+                  let url = pid ^ ".html#" ^ tname in
+                  <:html<<li><a href=$str:url$>$str:desc$</a></li>&>>)
+              t.related
+          in
+          if links = [] then Cow.Html.nil
+          else
+            <:html<<h4><em>Related work</em></h4>
+                   <ul>$list:links$</ul>&>>
         in
-        if links = [] then Cow.Html.nil
-        else
-          <:html<<h4><em>Related work</em></h4>
-          <ul>$list:links$</ul>&>>
-      in
-      <:html<
+        <:html<
          <div style="width:75%">
          <h3 style="border-bottom: thin solid #999999;" id=$str:t.task_name$>$str:t.task_name$</h3>
          <p>$mugshots$ $status$<br />$refs_to_html t.refs$</p>
          $descr$
          $related$<br /></div>
       >>
-  ) (List.sort ~cmp:Gantt.sort_by_finish_date proj.tasks) in
+      ) (List.sort ~cmp:Gantt.sort_by_finish_date proj.tasks) in
   let team = List.map ~f:(mugshot_img ~float:false ~size:50) (people_in_project proj) in
   let teamlist = <:html<<p>$list:team$</p>&>> in
   let body = <:html<
@@ -211,9 +211,9 @@ let one_project proj =
 let outputs =
   let open Types.Paper in
   let pubs = List.map Data_papers.all_by_date
-    ~f:(fun p ->
-      let hrdate = sprintf "%s %d" (Month.to_string (Date.month p.date)) (Date.year p.date) in
-      <:html<
+      ~f:(fun p ->
+          let hrdate = sprintf "%s %d" (Month.to_string (Date.month p.date)) (Date.year p.date) in
+          <:html<
        <p>
        <a name=$str:p.id$></a>
        <b>$str:p.title$</b>
@@ -234,9 +234,9 @@ let outputs =
 
 let news =
   let monthly = List.map Data_news.monthlies ~f:(fun (_,m) ->
-     let hd = human_readable_date (Date.of_string m) in
-     let body = Markdown.from_file_to_html (sprintf "news/%s" m) in
-     <:html<
+      let hd = human_readable_date (Date.of_string m) in
+      let body = Markdown.from_file_to_html (sprintf "news/%s" m) in
+      <:html<
        <div style="width:75%">
        <h2 style="border-bottom: 1px solid #cccccc" id=$str:hd$>$str:hd$</h2>
         $body$</div>
@@ -248,26 +248,26 @@ let news =
   one_page ~extra_head ~title:"News" ~body ()
 
 let news_atom =
- (* let monthly = List.map Data_news.monthlies ~f:(fun m -> *)
+  (* let monthly = List.map Data_news.monthlies ~f:(fun m -> *)
   let open Cow.Atom in
   let entries = List.map Data_news.monthlies
-    ~f:(fun (date, file) ->
-       let yr,month,_,_,_ = date in
-       let month_str = Month.to_string (Month.of_int_exn month) in
-       let id = Uri.to_string (Vars.mk_uri (sprintf "news/%s" file)) in
-       let title = sprintf "%s %d news update" month_str yr in
-       let subtitle = None in
-       let author = Some { name="Anil Madhavapeddy"; uri=Some "http://anil.recoil.org";
-         email=Some "anil@recoil.org" } in
-       let rights = Some "(c) Anil Madhavapeddy, all rights reserved" in
-       let updated = date in
-       let links = [ mk_link ~rel:`alternate ~typ:"text/html"
-          (Vars.mk_uri (sprintf "news/index.html#%s %d" month_str yr)) ] in
-       let entry = { id; title; subtitle; author; rights; updated; links } in
-       let content = Markdown.from_file_to_html (sprintf "news/%s" file) in
-       let base = Some (Uri.to_string (Vars.mk_uri (sprintf "news/"))) in
-       { entry; summary=None; content; base }
-    )
+      ~f:(fun (date, file) ->
+          let yr,month,_,_,_ = date in
+          let month_str = Month.to_string (Month.of_int_exn month) in
+          let id = Uri.to_string (Vars.mk_uri (sprintf "news/%s" file)) in
+          let title = sprintf "%s %d news update" month_str yr in
+          let subtitle = None in
+          let author = Some { name="Anil Madhavapeddy"; uri=Some "http://anil.recoil.org";
+                              email=Some "anil@recoil.org" } in
+          let rights = Some "(c) Anil Madhavapeddy, all rights reserved" in
+          let updated = date in
+          let links = [ mk_link ~rel:`alternate ~typ:"text/html"
+                          (Vars.mk_uri (sprintf "news/index.html#%s %d" month_str yr)) ] in
+          let entry = { id; title; subtitle; author; rights; updated; links } in
+          let content = Markdown.from_file_to_html (sprintf "news/%s" file) in
+          let base = Some (Uri.to_string (Vars.mk_uri (sprintf "news/"))) in
+          { entry; summary=None; content; base }
+        )
   in
   let links = [
     mk_link (Vars.mk_uri "/news/atom.xml");
@@ -320,7 +320,7 @@ let _ =
   write_uconfig "tasks" (List.map Data.Projects.all ~f:(fun p -> p.Types.Project.project_id));
   write_html "tasks/index" projects;
   List.iter Data.Projects.all ~f:(fun p ->
-    write_html ("tasks/"^p.Types.Project.project_id) (one_project p));
+      write_html ("tasks/"^p.Types.Project.project_id) (one_project p));
   write_uconfig "papers" [];
   write_html "papers/index" outputs;
   write_uconfig "news" [];

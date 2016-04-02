@@ -3,7 +3,7 @@ open Types
 
 module People = struct
   open Person
-  (* 
+  (*
     Computer Lab people
   *)
   let avsm = {
@@ -195,7 +195,7 @@ module People = struct
     bio=None;
     homepage=Some "http://www.cl.cam.ac.uk/~gp349/";
     mugshot=Some "gparisis.jpg";
-  }  
+  }
   let hannes = {
     id="hannes";
     name="Hannes Mehnert";
@@ -349,26 +349,26 @@ module People = struct
     homepage=Some "http://mort.io";
     mugshot=Some "mort.png";
   }
-(*  let gpotron = {
-    id="gpotron";
-    name="Guillain Potron";
-    affiliation=`CLx;
-    role="Summer visitor";
-    bio=None;
-    homepage=None;
-    mugshot=None;
-  }*)
-(*  let qli = {
-    id="qli";
-    name="Qi Li";
-    affiliation=`CLx;
-    role="Summer visitor";
-    bio=None;
-    homepage=None;
-    mugshot=None;
-    }*)
+  (*  let gpotron = {
+      id="gpotron";
+      name="Guillain Potron";
+      affiliation=`CLx;
+      role="Summer visitor";
+      bio=None;
+      homepage=None;
+      mugshot=None;
+      }*)
+  (*  let qli = {
+      id="qli";
+      name="Qi Li";
+      affiliation=`CLx;
+      role="Summer visitor";
+      bio=None;
+      homepage=None;
+      mugshot=None;
+      }*)
 
-  (* 
+  (*
     Citrix people
   *)
   let euan = {
@@ -379,7 +379,7 @@ module People = struct
     bio=None;
     homepage=None;
     mugshot=Some "euan.jpg";
-  } 
+  }
   let djs = {
     id="djs";
     name="Dave Scott";
@@ -416,7 +416,7 @@ module People = struct
     homepage=Some "http://wiki.xen.org/wiki/User:Lars.kurth";
     mugshot=Some "lars.jpg";
   }
-  (* 
+  (*
     Jane Street people
   *)
   let yaron = {
@@ -437,7 +437,7 @@ module People = struct
     homepage=Some "http://www.three-tuns.net/mark";
     mugshot=Some "shinwell.jpg";
   }
-  (* 
+  (*
     OCamlPro people
   *)
   let pierre = {
@@ -479,7 +479,7 @@ module People = struct
     mugshot=(Some "xleroy.jpg");
   }
 
-  (* 
+  (*
     Horizon people
   *)
   let mac = {
@@ -491,7 +491,7 @@ module People = struct
     homepage=Some "http://www.cs.nott.ac.uk/~drm";
     mugshot=Some "mac.jpg";
   }
-  (* 
+  (*
     Other people
   *)
   let ashish = {
@@ -562,7 +562,7 @@ module People = struct
     mugshot=Some "dbuenzli.jpg";
   }
 
-   let vbotbol = {
+  let vbotbol = {
     id="vbotbol";
     name="Vincent Botbol";
     affiliation=`Past;
@@ -609,9 +609,8 @@ module People = struct
     let other =
       List.Assoc.remove l `CL
       |> fun l -> List.Assoc.remove l `CLx
-      |> List.sort ~cmp:(fun a b -> cmp (fst a) (fst b))
-      |> List.map ~f:(fun (a,b) -> (a, List.rev b))
+                  |> List.sort ~cmp:(fun a b -> cmp (fst a) (fst b))
+                  |> List.map ~f:(fun (a,b) -> (a, List.rev b))
     in
     cucl, cuclx, other
 end
-

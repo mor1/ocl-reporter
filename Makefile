@@ -1,21 +1,31 @@
+INSTALL = brew install
+PACKAGES = omd,cohttp.lwt,core,cow,cow.syntax,lwt,netstring,river,syndic,uri
+OCAMLBUILD = ocamlbuild -j 4 -use-ocamlfind -syntax camlp4o -tag thread,annot
+
 build:
-	ocamlbuild -j 4 -use-ocamlfind -package omd,cohttp.lwt,core,cow,cow.syntax,lwt,netstring,river,pa_sexp_conv.syntax,syndic,uri -tag thread,annot -syntax camlp4o lib/www.native
+	$(OCAMLBUILD) -package $(PACKAGES) lib/www.native
+
+deps:
+	opam pin -y add -n ocl-reporter .
+	opam install --deps-only ocl-reporter
+	opam pin -y remove ocl-reporter
 
 clean:
-	rm -rf _build
+	ocamlbuild -clean www.native
+	$(RM) -r lint
 
 run: build
-	./_build/lib/www.native
+	./www.native
 
 www:
-	cd pages && env PATH=../ucampas:$$PATH ucampas -i -r3 index people tasks papers news
+	cd pages \
+	&& env PATH=../ucampas:$$PATH ucampas -i -r3 index people tasks papers news
 
 check:
-	echo If you get an error with this, do brew install linklint
-	rm -rf lint
-	mkdir -p lint
+	[ -z $$(which linklint) ] && $INSTALL linklint || true
+	$(RM) -r lint && mkdir -p lint
 	linklint -net -doc lint -root pages /@
 
 cron:
-	@git pull -u >/dev/null
-	@cd pages && rsync --delete -aqz . /anfs/www/html/projects/ocamllabs/
+	git pull -u >/dev/null
+	cd pages && rsync --delete -aqz . /anfs/www/html/projects/ocamllabs/

@@ -2,7 +2,7 @@ open Printf
 
 let mk_recent ~date ~url ~author ~title : string =
   sprintf
-"<tr>
+    "<tr>
     <td><i> %s </i></td>
     <td><a href=\"#%s-link\">%s</a></td>
     <td>%s</td>
@@ -10,9 +10,9 @@ let mk_recent ~date ~url ~author ~title : string =
 " date url title author
 
 let mk_post ~url ~title ~blog_url ~blog_title ~blog_name ~author
-            ~date ~content : string =
+    ~date ~content : string =
   sprintf
-"<div class=\"channelgroup\">
+    "<div class=\"channelgroup\">
   <div class=\"entrygroup\" id=\"%s-link\">
     <a name=\"#%s-link\"> </a>
     <h1 class=\"posttitle\">
@@ -37,9 +37,9 @@ let mk_post ~url ~title ~blog_url ~blog_title ~blog_name ~author
 " url url url title blog_url blog_title blog_name content url author date
 
 let mk_post_with_face ~url ~title ~blog_url ~blog_title ~blog_name ~author
-                      ~date ~content ~face ~face_height : string =
+    ~date ~content ~face ~face_height : string =
   sprintf
-"<div class=\"channelgroup\">
+    "<div class=\"channelgroup\">
   <div class=\"entrygroup\" id=\"%s-link\">
     <a name=\"#%s-link\"> </a>
     <div>
@@ -67,7 +67,7 @@ let mk_post_with_face ~url ~title ~blog_url ~blog_title ~blog_name ~author
 " url url face face_height url title blog_url blog_title blog_name content url author date
 
 let mk_body ~recentList ~postList : string =
-"<head> <title>Blogs</title>
+  "<head> <title>Blogs</title>
   <link rel=\"alternate\" href=\"http://www.cl.cam.ac.uk/projects/ocamllabs/blogs/atom.xml\" title=\"\" type=\"application/atom+xml\" />
   <style>
       a.icon-github {
@@ -199,7 +199,7 @@ let mk_body ~recentList ~postList : string =
 
   <h4>Recent Posts</h4>
   <table width=\"90%\">\n" ^ recentList ^
-"</table>
+  "</table>
 " ^ postList ^
-" </div>
+  " </div>
   </body>"

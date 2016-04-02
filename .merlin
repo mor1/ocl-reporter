@@ -9,3 +9,4 @@ PKG cow
 PKG netstring
 PKG core
 PKG ocaml_planet
+PKG river

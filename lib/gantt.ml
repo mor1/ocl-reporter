@@ -7,26 +7,26 @@ open Core.Std
 let years = [2012;2013;2014;2015]
 let start_date = Date.create_exn ~y:2012 ~m:Month.Aug ~d:1
 let end_date   = Date.create_exn ~y:2015 ~m:Month.Dec ~d:1
-let dates = 
+let dates =
   List.concat_map Month.all ~f:(fun m ->
-    List.map years ~f:(fun y -> Date.create_exn ~y ~m ~d:1))
+      List.map years ~f:(fun y -> Date.create_exn ~y ~m ~d:1))
   |> List.filter ~f:(fun d -> Date.(d > start_date && d < end_date))
-  |> List.sort ~cmp:Date.compare 
+  |> List.sort ~cmp:Date.compare
 let last_date = List.last_exn dates
 
 (* account for infinty column *)
 let total_colspan = List.length dates + 1
 let cells =
   List.map dates ~f:(fun d ->
-    if Date.month d = Month.Jan then
-      <:html<<td>$int:Date.year d$</td>&>> else
-      <:html<<td>&nbsp;</td>&>>
-  )
+      if Date.month d = Month.Jan then
+        <:html<<td>$int:Date.year d$</td>&>> else
+        <:html<<td>&nbsp;</td>&>>
+    )
   @ [ <:html<<td>&infin;</td>&>> ]
 
 let months_between d1 d2 =
   let round d = Date.create_exn ~y:(Date.year d) ~m:(Date.month d) ~d:1 in
-  Date.dates_between d1 d2 
+  Date.dates_between d1 d2
   |> List.map ~f:round
   |> List.dedup
   |> List.filter ~f:(fun d -> d <> (round d1))
@@ -57,7 +57,7 @@ let draw_task ?(hrefbase="") task =
     |None -> last_date
     |Some f -> f
   in
-  let padding ~cl d1 d2 c = 
+  let padding ~cl d1 d2 c =
     match List.length (months_between d1 d2) with
     |0 -> <:html<&>>
     |n -> <:html<<td class=$str:cl$ colspan=$str:string_of_int n$>$c$</td>&>>
@@ -84,7 +84,7 @@ let tasks ?(hrefbase="") proj = List.map ~f:(draw_task ~hrefbase) proj
 
 let css = <:html<
             <style type="text/css">
-            table { 
+            table {
             table-layout: fixed;
             border-spacing: 0px 2px;
             }
@@ -111,7 +111,7 @@ let sort_by_finish_date a b =
   Date.compare (finish_date b) (finish_date a)
 
 (* Output the main projects page HTML *)
-let to_project_html ?(moreinfo=true) projects = 
+let to_project_html ?(moreinfo=true) projects =
   let open Types.Project in
   let more proj =
     let proj_href = proj.project_id^".html" in
@@ -121,15 +121,15 @@ let to_project_html ?(moreinfo=true) projects =
        <h2 style=$str:style$ id=$str:proj.project_id$>
          <a href=$str:proj_href$>$str:proj.project_name$ &raquo;</a>
        </h2> >>
-      else
-        <:html<
+    else
+      <:html<
          <h2 style=$str:style$ id=$str:proj.project_id$>$str:proj.project_name$</h2> >>
   in
   List.map projects
     ~f:(fun proj ->
-      let proj_descr = Markdown.from_file_to_html (proj.project_id^"/descr") in
-      let ts = tasks ~hrefbase:(proj.project_id^".html") (List.sort ~cmp:sort_by_finish_date proj.tasks) in
-      <:html<
+        let proj_descr = Markdown.from_file_to_html (proj.project_id^"/descr") in
+        let ts = tasks ~hrefbase:(proj.project_id^".html") (List.sort ~cmp:sort_by_finish_date proj.tasks) in
+        <:html<
         $css$
         <div style="width:75%">
         $more proj$
@@ -164,12 +164,12 @@ let to_one_project_html teamlist proj =
 let to_short_html person =
   let open Types.Project in
   (* Find projects for this person *)
-  let projects = List.filter Data.Projects.all 
+  let projects = List.filter Data.Projects.all
       ~f:(fun proj -> List.mem (people_in_project proj) person) in
   List.map projects ~f:(fun proj ->
-    let task_list = List.sort ~cmp:sort_by_finish_date proj.tasks in
-    let phref = sprintf "../tasks/%s.html" proj.project_id in
-    <:html<
+      let task_list = List.sort ~cmp:sort_by_finish_date proj.tasks in
+      let phref = sprintf "../tasks/%s.html" proj.project_id in
+      <:html<
       $css$
       <div style="width:75%">
       <h3 style="font-weight: bold" id=$str:proj.project_id$><a href=$str:phref$>$str:proj.project_name$</a></h3>
@@ -183,4 +183,4 @@ let to_short_html person =
       </table>
       </div>
     >>
-  )
+    )

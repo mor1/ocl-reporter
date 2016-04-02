@@ -15,8 +15,8 @@ let date_of_post p =
   match p.date with
   | None -> "<Date Unknown>"
   | Some d ->
-       let open Syndic.Date in
-       sprintf "%s %02d, %d" (string_of_month(month d)) (day d) (year d)
+    let open Syndic.Date in
+    sprintf "%s %02d, %d" (string_of_month(month d)) (day d) (year d)
 
 let rec length_html html =
   List.fold_left (fun l h -> l + length_html_el h) 0 html
@@ -61,43 +61,43 @@ let write_atom posts out_atom =
 let write_posts ?num_posts ?ofs ~out_file ~out_atom in_file =
   let posts = get_posts ?n:num_posts ?ofs in_file in
   let recentList = List.map (fun p ->
-                     let date = date_of_post p in
-                     let title = p.title in
-                     let url = match p.link with
-                       | Some u -> Uri.to_string u
-                       | None -> Digest.to_hex (Digest.string (p.title)) in
-                     let author = p.author in
-                     mk_recent date url author title) posts in
+      let date = date_of_post p in
+      let title = p.title in
+      let url = match p.link with
+        | Some u -> Uri.to_string u
+        | None -> Digest.to_hex (Digest.string (p.title)) in
+      let author = p.author in
+      mk_recent date url author title) posts in
   let postList = List.map (fun p ->
-                   let title = p.title in
-                   let date = date_of_post p in
-                   let url = match p.link with
-                     | Some u -> Uri.to_string u
-                     | None -> Digest.to_hex (Digest.string (p.title)) in
-                   let author = p.author in
-                   let blog_name = p.contributor.name in
-                   let blog_title = p.contributor.title in
-                   let blog_url = p.contributor.url in
-                   (* Write contents *)
-                   let buffer = Buffer.create 0 in
-                   let channel = new Netchannels.output_buffer buffer in
-                   let desc = if length_html p.desc < 1000 then p.desc
-                              else toggle (prefix_of_html p.desc 1000) p.desc ~anchor:url in
-                   let _ = Nethtml.write channel @@ encode_document desc in
-                   let content = Buffer.contents buffer in
-                   try
-                     let (face, face_height) = M.find p.author face_map in
-                     match face with
-                       | None -> mk_post url title blog_url blog_title blog_name
-                                         author date content
-                       | Some face -> mk_post_with_face url title blog_url
-                                         blog_title blog_name author date
-                                          content face face_height
-                   with _ -> mk_post url title blog_url blog_title blog_name
-                                     author date content)
-                  posts in
+      let title = p.title in
+      let date = date_of_post p in
+      let url = match p.link with
+        | Some u -> Uri.to_string u
+        | None -> Digest.to_hex (Digest.string (p.title)) in
+      let author = p.author in
+      let blog_name = p.contributor.name in
+      let blog_title = p.contributor.title in
+      let blog_url = p.contributor.url in
+      (* Write contents *)
+      let buffer = Buffer.create 0 in
+      let channel = new Netchannels.output_buffer buffer in
+      let desc = if length_html p.desc < 1000 then p.desc
+        else toggle (prefix_of_html p.desc 1000) p.desc ~anchor:url in
+      let _ = Nethtml.write channel @@ encode_document desc in
+      let content = Buffer.contents buffer in
+      try
+        let (face, face_height) = M.find p.author face_map in
+        match face with
+        | None -> mk_post url title blog_url blog_title blog_name
+                    author date content
+        | Some face -> mk_post_with_face url title blog_url
+                         blog_title blog_name author date
+                         content face face_height
+      with _ -> mk_post url title blog_url blog_title blog_name
+                  author date content)
+      posts in
   let body = mk_body (String.concat "\n" recentList)
-                     (String.concat "\n<br/><br/><br/>\n" postList) in
+      (String.concat "\n<br/><br/><br/>\n" postList) in
   (* write to file *)
   let f = open_out out_file in
   let () = output_string f body in
